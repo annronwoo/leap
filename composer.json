@@ -1,0 +1,21 @@
+{
+    "name": "leap/yii2-oauth",
+    "description": "yii2-oauth",
+    "type": "yii2-extension",
+    "keywords": ["yii2","oauth"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "aaron",
+            "email": "bwu@maxleap.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "leap\\oauth\\": ""
+        }
+    }
+}
