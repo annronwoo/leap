@@ -5,13 +5,13 @@ namespace leap\oauth;
 use yii\authclient\OAuth2;
 use yii\web\HttpException;
 
-class Weixin extends OAuth2
+class Qq extends OAuth2
 {
-    public $authUrl = 'https://open.weixin.qq.com/connect/qrconnect';
+    public $authUrl = 'https://graph.qq.com/oauth2.0/authorize';
     
-    public $tokenUrl = 'https://api.weixin.qq.com/sns/oauth2/access_token';
+    public $tokenUrl = 'https://graph.qq.com/oauth2.0/token';
     
-    public $apiBaseUrl = 'https://api.weixin.qq.com';
+    public $apiBaseUrl = 'https://graph.qq.com';
     
     /**
      * @inheritdoc
@@ -20,31 +20,31 @@ class Weixin extends OAuth2
     {
         parent::init();
         if ($this->scope === null) {
-            $this->scope = 'snsapi_userinfo';
+            $this->scope = 'get_user_info';
         }
     }
     
-    public function fetchAccessToken($authCode, array $params = [])
-    {
-        $defaultParams = [
-            'appid' => $this->clientId,
-            'secret' => $this->clientSecret,
-            'code' => $authCode,
-            'grant_type' => 'authorization_code',
-        ];
-
-        $request = $this->createRequest()
-            ->setMethod('POST')
-            ->setUrl($this->tokenUrl)
-            ->setData(array_merge($defaultParams, $params));
-
-        $response = $this->sendRequest($request);
-
-        $token = $this->createToken(['params' => $response]);
-        $this->setAccessToken($token);
-
-        return $token;
-    }
+//    public function fetchAccessToken($authCode, array $params = [])
+//    {
+//        $defaultParams = [
+//            'appid' => $this->clientId,
+//            'secret' => $this->clientSecret,
+//            'code' => $authCode,
+//            'grant_type' => 'authorization_code',
+//        ];
+//
+//        $request = $this->createRequest()
+//            ->setMethod('POST')
+//            ->setUrl($this->tokenUrl)
+//            ->setData(array_merge($defaultParams, $params));
+//
+//        $response = $this->sendRequest($request);
+//
+//        $token = $this->createToken(['params' => $response]);
+//        $this->setAccessToken($token);
+//
+//        return $token;
+//    }
     
     public function applyAccessTokenToRequest($request, $accessToken)
     {
@@ -54,9 +54,16 @@ class Weixin extends OAuth2
         $request->setData($data);
     }
     
-    public function initUserAttributes()
+    protected function initUserAttributes()
     {
-        return $this->api('sns/userinfo', 'GET');
+        return $this->api('oauth2.0/me', 'GET');
+    }
+    
+    public function getUserInfo()
+    {
+        return $this->api("user/get_user_info", 'GET', [
+            'oauth_consumer_key' => $this->clientId,
+        ]);
     }
     
     /**
@@ -64,7 +71,7 @@ class Weixin extends OAuth2
      */
     protected function defaultName()
     {
-        return 'weixin';
+        return 'qq';
     }
 
     /**
@@ -72,6 +79,6 @@ class Weixin extends OAuth2
      */
     protected function defaultTitle()
     {
-        return 'Weixin';
+        return 'QQ';
     }
 }
